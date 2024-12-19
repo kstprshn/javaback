@@ -7,5 +7,5 @@ import ru.java.teamProject.SmartTaskFlow.entity.Panel;
 import java.util.UUID;
 
 @Repository
-public interface PanelRepository extends JpaRepository<Panel, UUID> {
+public interface PanelRepository extends JpaRepository<Panel, Long> {
 }

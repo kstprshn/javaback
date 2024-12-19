@@ -1,15 +1,15 @@
 package ru.java.teamProject.SmartTaskFlow.dto;
 
-import java.util.UUID;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter @Getter
 public class TaskDTO {
-    private UUID id;
+    private Long id;
     private String name;
     private String priority;
     private Integer orderIndex;
-    private UUID columnId;
-    private String columnName;
-    private List<SubtaskDTO> subtasks;
-    private List<CommentDTO> comments;
+    private Long columnId;
     private boolean archived;
 }

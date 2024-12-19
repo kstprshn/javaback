@@ -12,6 +12,6 @@ public interface BoardService {
     void createBoard(String email, CreateBoardDTO boardDTO);
     void updateBoardName(Long boardId, UpdateBoardDTO boardDTO);
     void deleteBoard(Long boardId);
-    Board addMember(UUID boardId, UUID userId);
+    Board addMember(Long boardId, Long userId);
     List<BoardDTO> getAllBoards(String email);
 }

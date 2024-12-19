@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.java.teamProject.SmartTaskFlow.entity.Comment;
-import ru.java.teamProject.SmartTaskFlow.service.CommentService;
+import ru.java.teamProject.SmartTaskFlow.service.CommentServiceImpl;
 
 import java.util.Map;
 import java.util.UUID;
@@ -13,10 +13,10 @@ import java.util.UUID;
 @RequestMapping("/api/comments")
 public class CommentController {
 
-    private final CommentService commentService;
+    private final CommentServiceImpl commentServiceImpl;
 
-    public CommentController(CommentService commentService) {
-        this.commentService = commentService;
+    public CommentController(CommentServiceImpl commentServiceImpl) {
+        this.commentServiceImpl = commentServiceImpl;
     }
 
     @PostMapping
@@ -24,12 +24,12 @@ public class CommentController {
         UUID taskId = UUID.fromString(request.get("taskId"));
         UUID authorId = UUID.fromString(request.get("authorId"));
         String content = request.get("content");
-        return ResponseEntity.status(HttpStatus.CREATED).body(commentService.addComment(taskId, authorId, content));
+        return ResponseEntity.status(HttpStatus.CREATED).body(commentServiceImpl.addComment(taskId, authorId, content));
     }
 
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable UUID commentId) {
-        commentService.deleteComment(commentId);
+        commentServiceImpl.deleteComment(commentId);
         return ResponseEntity.noContent().build();
     }
 }

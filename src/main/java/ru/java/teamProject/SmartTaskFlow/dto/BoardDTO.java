@@ -9,7 +9,7 @@ import java.util.UUID;
 @Setter
 @Getter
 public class BoardDTO {
-    private UUID id;
+    private Long id;
     private String name;
     private List<String> members;
 }

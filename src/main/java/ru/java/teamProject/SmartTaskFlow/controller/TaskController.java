@@ -65,12 +65,13 @@ public class TaskController {
 
     @PostMapping
     public ResponseEntity<Task> createTask(@RequestBody Map<String, String> request) {
-        UUID panelId = UUID.fromString(request.get("panelId"));
+        Long panelId = Long.parseLong(request.get("panelId")); // Исправлено: преобразование в Long
         String name = request.get("name");
         String priority = request.get("priority");
         Integer orderIndex = Integer.parseInt(request.get("orderIndex"));
         return ResponseEntity.status(HttpStatus.CREATED).body(taskServiceImpl.createTask(panelId, name, priority, orderIndex));
     }
+
 
     @PatchMapping("/{taskId}/assign/{userId}")
     public ResponseEntity<Task> assignUser(@PathVariable UUID taskId, @PathVariable UUID userId) {

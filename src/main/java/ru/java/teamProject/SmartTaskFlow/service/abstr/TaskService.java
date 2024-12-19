@@ -13,8 +13,8 @@ public interface TaskService {
     void deleteTask(Long taskId);
     void moveTask(Long taskId, Long targetColumnId);
     void addCommentToTask(Long taskId, CreateCommentDTO commentDTO);
-    Task createTask(UUID panelId, String name, String priority, Integer orderIndex);
-    Task assignUser(UUID taskId, UUID userId);
+    Task createTask(Long panelId, String name, String priority, Integer orderIndex);
+    Task assignUser(Long taskId, Long userId);
     void addSubTask(Long taskId, CreateSubTaskDTO subTaskDTO);
     void updateSubTask(Long subTaskId, UpdateSubTaskDTO subTaskDTO);
     void deleteSubTask(Long subTaskId);

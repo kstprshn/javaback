@@ -7,4 +7,5 @@ import lombok.Setter;
 public class UpdateSubTaskDTO {
     private String name;
     private String status;
+    private boolean completed;
 }

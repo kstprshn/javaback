@@ -5,6 +5,6 @@ import ru.java.teamProject.SmartTaskFlow.entity.Comment;
 import java.util.UUID;
 
 public interface CommentService {
-    Comment addComment(UUID taskId, UUID authorId, String content);
-    void deleteComment(UUID commentId);
+    Comment addComment(Long taskId, Long authorId, String content);
+    void deleteComment(Long commentId);
 }

@@ -19,7 +19,7 @@ import java.util.UUID;
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    private Long id;
 
     @Column(nullable = false)
     private String name;
@@ -63,5 +63,9 @@ public class Task {
 
     @Column(nullable = false)
     private Integer orderIndex;
+
+    @Column(nullable = false)
+    private boolean archived = false;
+
 
 }

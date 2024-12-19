@@ -4,17 +4,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.java.teamProject.SmartTaskFlow.dto.RegisterUserDTO;
+import ru.java.teamProject.SmartTaskFlow.dto.UpdateProfileDTO;
 import ru.java.teamProject.SmartTaskFlow.entity.User;
 import ru.java.teamProject.SmartTaskFlow.repository.UserRepository;
+import ru.java.teamProject.SmartTaskFlow.service.abstr.UserService;
 
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class UserService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -25,7 +25,7 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
         user.setFirstName(registerDTO.getFirstName());
         user.setLastName(registerDTO.getLastName());
-        user.setNickname(registerDTO.getNickname());
+        user.setUsername(registerDTO.getUsername());
         userRepository.save(user);
     }
 
@@ -38,7 +38,7 @@ public class UserService {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
         user.setFirstName(profileDTO.getFirstName());
         user.setLastName(profileDTO.getLastName());
-        user.setNickname(profileDTO.getNickname());
+        user.setUsername(profileDTO.getUsername());
         if (profileDTO.getPassword() != null) {
             user.setPassword(passwordEncoder.encode(profileDTO.getPassword()));
         }

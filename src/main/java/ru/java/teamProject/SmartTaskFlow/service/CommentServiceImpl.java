@@ -7,25 +7,26 @@ import ru.java.teamProject.SmartTaskFlow.entity.User;
 import ru.java.teamProject.SmartTaskFlow.repository.CommentRepository;
 import ru.java.teamProject.SmartTaskFlow.repository.TaskRepository;
 import ru.java.teamProject.SmartTaskFlow.repository.UserRepository;
+import ru.java.teamProject.SmartTaskFlow.service.abstr.CommentService;
 
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
-public class CommentService {
+public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
 
-    public CommentService(CommentRepository commentRepository, TaskRepository taskRepository, UserRepository userRepository) {
+    public CommentServiceImpl(CommentRepository commentRepository, TaskRepository taskRepository, UserRepository userRepository) {
         this.commentRepository = commentRepository;
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
     }
 
-    public Comment addComment(UUID taskId, UUID authorId, String content) {
+    public Comment addComment(Long taskId, Long authorId, String content) {
         Task task = taskRepository.findById(taskId).orElseThrow(() -> new NoSuchElementException("Task not found"));
         User author = userRepository.findById(authorId).orElseThrow(() -> new NoSuchElementException("User not found"));
         Comment comment = new Comment();
@@ -36,7 +37,7 @@ public class CommentService {
         return commentRepository.save(comment);
     }
 
-    public void deleteComment(UUID commentId) {
+    public void deleteComment(Long commentId) {
         commentRepository.deleteById(commentId);
     }
 }

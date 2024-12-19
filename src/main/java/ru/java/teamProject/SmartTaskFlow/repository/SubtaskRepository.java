@@ -7,5 +7,5 @@ import ru.java.teamProject.SmartTaskFlow.entity.Subtask;
 import java.util.UUID;
 
 @Repository
-public interface SubtaskRepository extends JpaRepository<Subtask, UUID> {
+public interface SubtaskRepository extends JpaRepository<Subtask, Long> {
 }

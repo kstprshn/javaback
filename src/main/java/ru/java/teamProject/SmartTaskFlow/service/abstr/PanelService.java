@@ -5,7 +5,7 @@ import ru.java.teamProject.SmartTaskFlow.entity.Panel;
 import java.util.UUID;
 
 public interface PanelService {
-    Panel createPanel(UUID boardId, String name, Integer orderIndex);
-    Panel updatePanel(UUID panelId, String newName);
-    void deletePanel(UUID panelId);
+    Panel createPanel(Long boardId, String name, Integer orderIndex);
+    Panel updatePanel(Long panelId, String newName);
+    void deletePanel(Long panelId);
 }

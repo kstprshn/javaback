@@ -13,7 +13,7 @@ import ru.java.teamProject.SmartTaskFlow.repository.UserRepository;
 import ru.java.teamProject.SmartTaskFlow.service.abstr.BoardService;
 
 import java.util.List;
-import java.util.UUID;
+
 
 @Service
 @Transactional
@@ -54,7 +54,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Board addMember(UUID boardId, UUID userId) {
+    public Board addMember(Long boardId, Long userId) {
         log.info("Adding member to board ID: {}", boardId);
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("Board not found"));

@@ -1,14 +1,9 @@
 package ru.java.teamProject.SmartTaskFlow.service;
 
-import jakarta.persistence.Column;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.java.teamProject.SmartTaskFlow.dto.CreateCommentDTO;
-import ru.java.teamProject.SmartTaskFlow.dto.CreateTaskDTO;
-import ru.java.teamProject.SmartTaskFlow.dto.TaskDTO;
-import ru.java.teamProject.SmartTaskFlow.dto.UpdateTaskDTO;
-import ru.java.teamProject.SmartTaskFlow.entity.Comment;
-import ru.java.teamProject.SmartTaskFlow.entity.Task;
+import ru.java.teamProject.SmartTaskFlow.dto.*;
+import ru.java.teamProject.SmartTaskFlow.entity.*;
 import ru.java.teamProject.SmartTaskFlow.repository.*;
 import ru.java.teamProject.SmartTaskFlow.service.abstr.TaskService;
 
@@ -21,15 +16,21 @@ public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
     private final PanelRepository panelRepository;
 
-    public TaskServiceImpl(TaskRepository taskRepository, PanelRepository panelRepository) {
+    private final UserRepository userRepository;
+
+    private final SubtaskRepository subTaskRepository;
+
+    public TaskServiceImpl(TaskRepository taskRepository, PanelRepository panelRepository, UserRepository userRepository, SubtaskRepository subTaskRepository) {
         this.taskRepository = taskRepository;
         this.panelRepository = panelRepository;
+        this.userRepository = userRepository;
+        this.subTaskRepository = subTaskRepository;
     }
 
     @Override
     public List<TaskDTO> getTasksInColumn(Long columnId) {
         log.info("Fetching tasks for column ID: {}", columnId);
-        return taskRepository.findByColumnId(columnId)
+        return taskRepository.findByPanelId(columnId)
                 .stream()
                 .map(task -> {
                     TaskDTO taskDTO = new TaskDTO();
@@ -44,15 +45,15 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void addTaskToColumn(Long columnId, CreateTaskDTO taskDTO) {
-        log.info("Adding task to column ID: {}", columnId);
-        Column column = panelRepository.findById(columnId)
+    public void addTaskToColumn(Long panelId, CreateTaskDTO taskDTO) {
+        log.info("Adding task to column ID: {}", panelId);
+        Panel panel = panelRepository.findById(panelId)
                 .orElseThrow(() -> new IllegalArgumentException("Column not found"));
         Task task = new Task();
         task.setName(taskDTO.getName());
         task.setPriority(taskDTO.getPriority());
         task.setOrderIndex(taskDTO.getOrderIndex());
-        task.setColumn(column);
+        task.setPanel(panel);
         taskRepository.save(task);
     }
 
@@ -84,9 +85,9 @@ public class TaskServiceImpl implements TaskService {
         log.info("Moving task ID: {} to column ID: {}", taskId, targetColumnId);
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new IllegalArgumentException("Task not found"));
-        Column targetColumn = panelRepository.findById(targetColumnId)
+        Panel targetColumn = panelRepository.findById(targetColumnId)
                 .orElseThrow(() -> new IllegalArgumentException("Target column not found"));
-        task.setColumn(targetColumn);
+        task.setPanel(targetColumn);
         taskRepository.save(task);
     }
 
@@ -105,7 +106,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<TaskDTO> getArchivedTasks(String email) {
         log.info("Fetching archived tasks for user: {}", email);
-        return taskRepository.findByUserEmailAndArchived(email, true)
+        return taskRepository.findByCreatorEmailAndArchived(email, true)
                 .stream()
                 .map(task -> {
                     TaskDTO taskDTO = new TaskDTO();
@@ -116,4 +117,85 @@ public class TaskServiceImpl implements TaskService {
                 })
                 .toList();
     }
+
+    @Override
+    public Task createTask(Long panelId, String name, String priority, Integer orderIndex) {
+        log.info("Creating task in panel ID: {}", panelId);
+
+        // Найти панель по ID
+        Panel panel = panelRepository.findById(panelId)
+                .orElseThrow(() -> new IllegalArgumentException("Panel not found"));
+
+        // Создать задачу и заполнить поля
+        Task task = new Task();
+        task.setName(name);
+        task.setPriority(priority);
+        task.setOrderIndex(orderIndex);
+        task.setPanel(panel);
+
+        Task savedTask = taskRepository.save(task);
+        return savedTask;
+    }
+
+    @Override
+    public Task assignUser(Long taskId, Long userId) {
+        log.info("Assigning user ID: {} to task ID: {}", userId, taskId);
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new IllegalArgumentException("Task not found"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        task.getAssignees().add(user);
+        return taskRepository.save(task);
+    }
+
+    @Override
+    public void addSubTask(Long taskId, CreateSubTaskDTO subTaskDTO) {
+        log.info("Adding sub-task to task ID: {}", taskId);
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new IllegalArgumentException("Task not found"));
+
+        Subtask subTask = new Subtask();
+        subTask.setName(subTaskDTO.getName());
+        subTask.setCompleted(false); // по умолчанию не выполнено
+        subTask.setTask(task);
+
+        task.getSubtasks().add(subTask);
+        taskRepository.save(task);
+    }
+
+    @Override
+    public void updateSubTask(Long subTaskId, UpdateSubTaskDTO subTaskDTO) {
+        log.info("Updating sub-task ID: {}", subTaskId);
+        Subtask subTask = subTaskRepository.findById(subTaskId)
+                .orElseThrow(() -> new IllegalArgumentException("Sub-task not found"));
+
+        if (subTaskDTO.getName() != null) {
+            subTask.setName(subTaskDTO.getName());
+        }
+        if (subTaskDTO.isCompleted() != null) {
+            subTask.setCompleted(subTaskDTO.isCompleted());
+        }
+        subTaskRepository.save(subTask);
+    }
+
+    @Override
+    public void deleteSubTask(Long subTaskId) {
+        log.info("Deleting sub-task ID: {}", subTaskId);
+        if (!subTaskRepository.existsById(subTaskId)) {
+            throw new IllegalArgumentException("Sub-task not found");
+        }
+        subTaskRepository.deleteById(subTaskId);
+    }
+
+    @Override
+    public void archiveTask(Long taskId) {
+        log.info("Archiving task ID: {}", taskId);
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new IllegalArgumentException("Task not found"));
+        task.setArchived(true);
+        taskRepository.save(task);
+    }
+
+
 }
