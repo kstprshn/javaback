@@ -6,9 +6,8 @@ import lombok.Setter;
 
 @Setter @Getter
 public class PanelUpdateDTO {
+
     @NotBlank
     private String name;
-
-    private Integer position;
 
 }

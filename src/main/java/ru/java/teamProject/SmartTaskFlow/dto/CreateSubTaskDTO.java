@@ -7,4 +7,7 @@ import lombok.Data;
 public class CreateSubTaskDTO {
     @NotNull
     private String name;
+
+    private Long taskId;
+
 }

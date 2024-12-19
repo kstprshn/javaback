@@ -4,7 +4,7 @@ import ru.java.teamProject.SmartTaskFlow.dto.*;
 import ru.java.teamProject.SmartTaskFlow.entity.Task;
 
 import java.util.List;
-import java.util.UUID;
+
 
 public interface TaskService {
     List<TaskDTO> getTasksInColumn(Long columnId);

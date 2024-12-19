@@ -6,7 +6,6 @@ import ru.java.teamProject.SmartTaskFlow.dto.UpdateBoardDTO;
 import ru.java.teamProject.SmartTaskFlow.entity.Board;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface BoardService {
     void createBoard(String email, CreateBoardDTO boardDTO);

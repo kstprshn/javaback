@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.java.teamProject.SmartTaskFlow.entity.enums.Status;
 
-import java.util.UUID;
 
 @Entity
 @Table(name = "subtasks")
@@ -22,7 +22,7 @@ public class Subtask {
     private String name;
 
     @Column(nullable = false)
-    private String status;
+    private Status status;
 
     @ManyToOne
     @JoinColumn(name = "task_id", nullable = false)

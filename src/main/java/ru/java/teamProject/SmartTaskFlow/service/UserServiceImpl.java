@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public void logout(String email) {
-        // Handle logout logic if necessary (e.g., invalidating tokens)
+        // По хорошему тут нужен jwt
     }
 
     public void deleteUser(Long userId) {

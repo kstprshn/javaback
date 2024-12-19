@@ -1,6 +1,7 @@
 package ru.java.teamProject.SmartTaskFlow.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.java.teamProject.SmartTaskFlow.entity.Board;
 import ru.java.teamProject.SmartTaskFlow.entity.Panel;
 import ru.java.teamProject.SmartTaskFlow.repository.BoardRepository;
@@ -10,6 +11,7 @@ import ru.java.teamProject.SmartTaskFlow.service.abstr.PanelService;
 import java.util.NoSuchElementException;
 
 @Service
+@Transactional
 public class PanelServiceImpl implements PanelService {
 
     private final PanelRepository panelRepository;

@@ -7,6 +7,9 @@ import lombok.Setter;
 @Setter
 @Getter
 public class CreateTaskDTO {
+
+    private Long panelId;
+
     @NotNull
     private String name;
 

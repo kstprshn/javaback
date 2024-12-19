@@ -2,8 +2,10 @@ package ru.java.teamProject.SmartTaskFlow.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.java.teamProject.SmartTaskFlow.dto.*;
 import ru.java.teamProject.SmartTaskFlow.entity.*;
+import ru.java.teamProject.SmartTaskFlow.entity.enums.Status;
 import ru.java.teamProject.SmartTaskFlow.repository.*;
 import ru.java.teamProject.SmartTaskFlow.service.abstr.TaskService;
 
@@ -12,6 +14,7 @@ import java.util.List;
 
 @Service
 @Slf4j
+@Transactional
 public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
     private final PanelRepository panelRepository;
@@ -157,7 +160,7 @@ public class TaskServiceImpl implements TaskService {
 
         Subtask subTask = new Subtask();
         subTask.setName(subTaskDTO.getName());
-        subTask.setCompleted(false); // по умолчанию не выполнено
+        subTask.setStatus(Status.NEW);
         subTask.setTask(task);
 
         task.getSubtasks().add(subTask);
@@ -173,8 +176,8 @@ public class TaskServiceImpl implements TaskService {
         if (subTaskDTO.getName() != null) {
             subTask.setName(subTaskDTO.getName());
         }
-        if (subTaskDTO.isCompleted() != null) {
-            subTask.setCompleted(subTaskDTO.isCompleted());
+        if (subTaskDTO.getStatus() != null) {
+            subTask.setStatus(subTaskDTO.getStatus());
         }
         subTaskRepository.save(subTask);
     }
