@@ -1,11 +1,11 @@
 package ru.java.teamProject.SmartTaskFlow.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "users")
@@ -32,6 +32,7 @@ public class User {
     private String password;
 
     @ManyToMany(mappedBy = "members", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Board> boards = new ArrayList<>();
 
     public User(String firstName, String lastName, String username, String email, String password) {

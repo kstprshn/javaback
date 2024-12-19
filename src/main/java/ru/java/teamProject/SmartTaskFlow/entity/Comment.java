@@ -1,5 +1,6 @@
 package ru.java.teamProject.SmartTaskFlow.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "comments")
@@ -24,10 +24,12 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "author_id", nullable = false)
+    @JsonIgnore
     private User author;
 
     @ManyToOne
     @JoinColumn(name = "task_id", nullable = false)
+    @JsonIgnore
     private Task task;
 
     @Column(nullable = false)

@@ -1,5 +1,6 @@
 package ru.java.teamProject.SmartTaskFlow.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,7 +9,6 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "boards")
@@ -25,6 +25,7 @@ public class Board {
 
     @ManyToOne
     @JoinColumn(name = "creator_id", nullable = false)
+    @JsonIgnore
     private User creator;
 
     @ManyToMany
@@ -33,9 +34,11 @@ public class Board {
             joinColumns = @JoinColumn(name = "board_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
+    @JsonIgnore
     private List<User> members = new ArrayList<>();
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Panel> panels = new ArrayList<>();
 
     public Board(String name, User creator) {

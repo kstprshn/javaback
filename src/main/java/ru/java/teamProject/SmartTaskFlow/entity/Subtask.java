@@ -1,5 +1,6 @@
 package ru.java.teamProject.SmartTaskFlow.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,6 +27,7 @@ public class Subtask {
 
     @ManyToOne
     @JoinColumn(name = "task_id", nullable = false)
+    @JsonIgnore
     private Task task;
 
 }
