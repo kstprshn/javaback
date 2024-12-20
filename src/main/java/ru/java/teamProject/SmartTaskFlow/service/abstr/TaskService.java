@@ -3,6 +3,7 @@ package ru.java.teamProject.SmartTaskFlow.service.abstr;
 import ru.java.teamProject.SmartTaskFlow.dto.*;
 import ru.java.teamProject.SmartTaskFlow.entity.Task;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -18,6 +19,12 @@ public interface TaskService {
     void addSubTask(Long taskId, CreateSubTaskDTO subTaskDTO);
     void updateSubTask(Long subTaskId, UpdateSubTaskDTO subTaskDTO);
     void deleteSubTask(Long subTaskId);
-    void archiveTask(Long taskId);
+
     List<TaskDTO> getArchivedTasks(String email);
+
+    Task updateDates(Long taskId, LocalDateTime startDate, LocalDateTime endDate);
+
+    void archiveTask(Long taskId);
+
+    void unarchiveTask(Long taskId);
 }

@@ -91,10 +91,16 @@ public class TaskController {
         return ResponseEntity.ok("Sub-task deleted successfully.");
     }
 
-    @PostMapping("/tasks/{taskId}/archive")
+    @PostMapping("/{taskId}/archive")
     public ResponseEntity<?> archiveTask(@PathVariable Long taskId) {
         taskServiceImpl.archiveTask(taskId);
         return ResponseEntity.ok("Task archived successfully.");
+    }
+
+    @PostMapping("/{taskId}/unarchive")
+    public ResponseEntity<Void> unarchiveTask(@PathVariable Long taskId) {
+        taskServiceImpl.unarchiveTask(taskId);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/tasks/archive")

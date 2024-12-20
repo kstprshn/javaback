@@ -1,5 +1,6 @@
 package ru.java.teamProject.SmartTaskFlow.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,6 +10,7 @@ import ru.java.teamProject.SmartTaskFlow.entity.enums.Status;
 import ru.java.teamProject.SmartTaskFlow.repository.*;
 import ru.java.teamProject.SmartTaskFlow.service.abstr.TaskService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -58,6 +60,15 @@ public class TaskServiceImpl implements TaskService {
         task.setOrderIndex(taskDTO.getOrderIndex());
         task.setPanel(panel);
         taskRepository.save(task);
+    }
+
+    public Task updateDates(Long taskId, LocalDateTime startDate, LocalDateTime endDate) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new EntityNotFoundException("Task not found"));
+
+        task.setStartDate(startDate);
+        task.setEndDate(endDate);
+        return taskRepository.save(task);
     }
 
     @Override
@@ -200,5 +211,12 @@ public class TaskServiceImpl implements TaskService {
         taskRepository.save(task);
     }
 
+    public void unarchiveTask(Long taskId) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new EntityNotFoundException("Task not found"));
+
+        task.setArchived(false);
+         taskRepository.save(task);
+    }
 
 }

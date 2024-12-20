@@ -18,7 +18,7 @@ import java.util.List;
 @Setter @Getter
 public class Task {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -26,29 +26,6 @@ public class Task {
 
     @Column
     private String description;
-
-    @ManyToOne
-    @JoinColumn(name = "panel_id", nullable = false)
-    @JsonIgnore
-    private Panel panel;
-
-    @ManyToOne
-    @JoinColumn(name = "creator_id", nullable = false)
-    @JsonIgnore
-    private User creator;
-
-    @ManyToMany
-    @JoinTable(
-            name = "task_assignees",
-            joinColumns = @JoinColumn(name = "task_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    @JsonIgnore
-    private List<User> assignees = new ArrayList<>();
-
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<Subtask> subtasks = new ArrayList<>();
 
     @Column(nullable = false)
     private String priority;
@@ -60,17 +37,33 @@ public class Task {
     private LocalDateTime endDate;
 
     @Column(nullable = false)
-    private String status;
-
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<Comment> comments = new ArrayList<>();
-
-    @Column(nullable = false)
     private Integer orderIndex;
 
     @Column(nullable = false)
     private boolean archived = false;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "panel_id", nullable = false)
+    @JsonIgnore
+    private Panel panel;
+
+    @ManyToMany
+    @JoinTable(
+            name = "task_users",
+            joinColumns = @JoinColumn(name = "task_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    @JsonIgnore
+    private List<User> assignees = new ArrayList<>();
+
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Subtask> subtasks = new ArrayList<>();
+
+
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Comment> comments = new ArrayList<>();
 
 
 }

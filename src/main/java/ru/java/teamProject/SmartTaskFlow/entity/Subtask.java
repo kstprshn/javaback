@@ -16,7 +16,7 @@ import ru.java.teamProject.SmartTaskFlow.entity.enums.Status;
 @Getter @Setter
 public class Subtask {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -25,7 +25,7 @@ public class Subtask {
     @Column(nullable = false)
     private Status status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "task_id", nullable = false)
     @JsonIgnore
     private Task task;

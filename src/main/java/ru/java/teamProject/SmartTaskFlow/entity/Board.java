@@ -17,16 +17,18 @@ import java.util.List;
 @Setter @Getter
 public class Board {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
     private String name;
 
+    private Boolean isArchived = false;
+
     @ManyToOne
     @JoinColumn(name = "creator_id", nullable = false)
     @JsonIgnore
-    private User creator;
+    private User creator;  ??
 
     @ManyToMany
     @JoinTable(
@@ -40,10 +42,4 @@ public class Board {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Panel> panels = new ArrayList<>();
-
-    public Board(String name, User creator) {
-        this.name = name;
-        this.creator = creator;
-        this.members.add(creator); // Creator is a default member
-    }
 }
