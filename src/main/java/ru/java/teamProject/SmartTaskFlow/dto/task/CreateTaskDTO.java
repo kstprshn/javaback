@@ -1,4 +1,4 @@
-package ru.java.teamProject.SmartTaskFlow.dto;
+package ru.java.teamProject.SmartTaskFlow.dto.task;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

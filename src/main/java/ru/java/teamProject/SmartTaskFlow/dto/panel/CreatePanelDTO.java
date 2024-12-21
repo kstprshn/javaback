@@ -1,4 +1,4 @@
-package ru.java.teamProject.SmartTaskFlow.dto;
+package ru.java.teamProject.SmartTaskFlow.dto.panel;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

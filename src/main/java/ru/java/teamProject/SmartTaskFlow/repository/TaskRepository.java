@@ -10,7 +10,7 @@ import java.util.UUID;
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findByPanelId(Long panelId);
-    List<Task> findByCreatorEmailAndArchived(String email, boolean archived);
+    //List<Task> findByCreatorEmailAndArchived(String email, boolean archived); Task don't have CreatorEmail lol
 
 
 }

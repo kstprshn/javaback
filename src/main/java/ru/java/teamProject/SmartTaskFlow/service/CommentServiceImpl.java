@@ -1,5 +1,6 @@
 package ru.java.teamProject.SmartTaskFlow.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.java.teamProject.SmartTaskFlow.entity.Comment;
@@ -15,13 +16,13 @@ import java.util.NoSuchElementException;
 
 
 @Service
-@Transactional
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
 
+    @Autowired
     public CommentServiceImpl(CommentRepository commentRepository, TaskRepository taskRepository, UserRepository userRepository) {
         this.commentRepository = commentRepository;
         this.taskRepository = taskRepository;

@@ -5,10 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import ru.java.teamProject.SmartTaskFlow.dto.BoardDTO;
-import ru.java.teamProject.SmartTaskFlow.dto.CreateBoardDTO;
-import ru.java.teamProject.SmartTaskFlow.dto.UpdateBoardDTO;
-import ru.java.teamProject.SmartTaskFlow.entity.Board;
+import ru.java.teamProject.SmartTaskFlow.dto.board.BoardDTO;
+import ru.java.teamProject.SmartTaskFlow.dto.board.CreateBoardDTO;
+import ru.java.teamProject.SmartTaskFlow.dto.board.UpdateBoardDTO;
 import ru.java.teamProject.SmartTaskFlow.service.BoardServiceImpl;
 
 import java.util.List;
@@ -27,14 +26,12 @@ public class BoardController {
     @PostMapping
     public ResponseEntity<?> createBoard(Authentication authentication, @Valid @RequestBody CreateBoardDTO boardDTO) {
         String email = authentication.getName();
-        boardService.createBoard(email, boardDTO);
-        return ResponseEntity.ok("Board created successfully.");
+        return ResponseEntity.ok(boardService.createBoard(email, boardDTO));
     }
 
     @PutMapping("/{boardId}")
     public ResponseEntity<?> updateBoardName(@PathVariable Long boardId, @Valid @RequestBody UpdateBoardDTO boardDTO) {
-        boardService.updateBoardName(boardId, boardDTO);
-        return ResponseEntity.ok("Board name updated successfully.");
+        return ResponseEntity.ok(boardService.updateBoardName(boardId, boardDTO));
     }
 
     @DeleteMapping("/{boardId}")
@@ -44,12 +41,12 @@ public class BoardController {
     }
 
     @PutMapping("/{boardId}/members/{userId}")
-    public ResponseEntity<Board> addMember(@PathVariable Long boardId, @PathVariable Long userId) {
+    public ResponseEntity<?> addMember(@PathVariable Long boardId, @PathVariable Long userId) {
         return ResponseEntity.ok(boardService.addMember(boardId, userId));
     }
 
     @GetMapping
-    public ResponseEntity<List<BoardDTO>> getAllBoards(Authentication authentication) {
+    public ResponseEntity<?> getAllBoards(Authentication authentication) {
         String email = authentication.getName();
         List<BoardDTO> boards = boardService.getAllBoards(email);
         return ResponseEntity.ok(boards);

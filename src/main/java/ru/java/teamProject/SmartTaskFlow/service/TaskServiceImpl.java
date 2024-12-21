@@ -4,13 +4,20 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.java.teamProject.SmartTaskFlow.dto.*;
+import ru.java.teamProject.SmartTaskFlow.dto.comment.CreateCommentDTO;
+import ru.java.teamProject.SmartTaskFlow.dto.subtask.CreateSubTaskDTO;
+import ru.java.teamProject.SmartTaskFlow.dto.subtask.SubTaskDTO;
+import ru.java.teamProject.SmartTaskFlow.dto.subtask.UpdateSubTaskDTO;
+import ru.java.teamProject.SmartTaskFlow.dto.task.CreateTaskDTO;
+import ru.java.teamProject.SmartTaskFlow.dto.task.TaskDTO;
+import ru.java.teamProject.SmartTaskFlow.dto.task.UpdateTaskDTO;
 import ru.java.teamProject.SmartTaskFlow.entity.*;
 import ru.java.teamProject.SmartTaskFlow.entity.enums.Status;
 import ru.java.teamProject.SmartTaskFlow.repository.*;
 import ru.java.teamProject.SmartTaskFlow.service.abstr.TaskService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -20,16 +27,30 @@ import java.util.List;
 public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
     private final PanelRepository panelRepository;
-
     private final UserRepository userRepository;
 
-    private final SubtaskRepository subTaskRepository;
 
-    public TaskServiceImpl(TaskRepository taskRepository, PanelRepository panelRepository, UserRepository userRepository, SubtaskRepository subTaskRepository) {
+    private TaskDTO buildTaskDto(Task task) {
+        return new TaskDTO()
+                .setId(task.getId())
+                .setName(task.getName())
+                .setPriority(task.getPriority())
+                .setArchived(task.isArchived())
+                .setPanelId(task.getPanel().getId());
+    }
+
+    private SubTaskDTO buildSubTaskDto(Subtask subtask) {
+        return new SubTaskDTO()
+                .setId(subtask.getId())
+                .setName(subtask.getName())
+                .setStatus(subtask.getStatus().name())
+                .setTaskId(subtask.getTask().getId());
+    }
+
+    public TaskServiceImpl(TaskRepository taskRepository, PanelRepository panelRepository, UserRepository userRepository) {
         this.taskRepository = taskRepository;
         this.panelRepository = panelRepository;
         this.userRepository = userRepository;
-        this.subTaskRepository = subTaskRepository;
     }
 
     @Override
@@ -50,7 +71,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void addTaskToColumn(Long panelId, CreateTaskDTO taskDTO) {
+    public TaskDTO addTaskToColumn(Long panelId, CreateTaskDTO taskDTO) {
         log.info("Adding task to column ID: {}", panelId);
         Panel panel = panelRepository.findById(panelId)
                 .orElseThrow(() -> new IllegalArgumentException("Column not found"));
@@ -60,19 +81,11 @@ public class TaskServiceImpl implements TaskService {
         task.setOrderIndex(taskDTO.getOrderIndex());
         task.setPanel(panel);
         taskRepository.save(task);
-    }
-
-    public Task updateDates(Long taskId, LocalDateTime startDate, LocalDateTime endDate) {
-        Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new EntityNotFoundException("Task not found"));
-
-        task.setStartDate(startDate);
-        task.setEndDate(endDate);
-        return taskRepository.save(task);
+        return null;
     }
 
     @Override
-    public void updateTask(Long taskId, UpdateTaskDTO taskDTO) {
+    public TaskDTO updateTask(Long taskId, UpdateTaskDTO taskDTO) {
         log.info("Updating task with ID: {}", taskId);
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new IllegalArgumentException("Task not found"));
@@ -86,6 +99,8 @@ public class TaskServiceImpl implements TaskService {
             task.setOrderIndex(taskDTO.getOrderIndex());
         }
         taskRepository.save(task);
+
+        return buildTaskDto(task);
     }
 
     @Override
@@ -95,7 +110,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void moveTask(Long taskId, Long targetColumnId) {
+    public TaskDTO moveTask(Long taskId, Long targetColumnId) {
         log.info("Moving task ID: {} to column ID: {}", taskId, targetColumnId);
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new IllegalArgumentException("Task not found"));
@@ -103,10 +118,12 @@ public class TaskServiceImpl implements TaskService {
                 .orElseThrow(() -> new IllegalArgumentException("Target column not found"));
         task.setPanel(targetColumn);
         taskRepository.save(task);
+
+        return buildTaskDto(task);
     }
 
     @Override
-    public void addCommentToTask(Long taskId, CreateCommentDTO commentDTO) {
+    public TaskDTO addCommentToTask(Long taskId, CreateCommentDTO commentDTO) {
         log.info("Adding comment to task ID: {}", taskId);
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new IllegalArgumentException("Task not found"));
@@ -115,25 +132,29 @@ public class TaskServiceImpl implements TaskService {
         comment.setTask(task);
         task.getComments().add(comment);
         taskRepository.save(task);
+
+        return buildTaskDto(task);
     }
 
     @Override
     public List<TaskDTO> getArchivedTasks(String email) {
         log.info("Fetching archived tasks for user: {}", email);
-        return taskRepository.findByCreatorEmailAndArchived(email, true)
-                .stream()
-                .map(task -> {
-                    TaskDTO taskDTO = new TaskDTO();
-                    taskDTO.setId(task.getId());
-                    taskDTO.setName(task.getName());
-                    taskDTO.setArchived(true);
-                    return taskDTO;
-                })
-                .toList();
+
+        return new ArrayList<>();
+//        return taskRepository.findByCreatorEmailAndArchived(email, true)
+//                .stream()
+//                .map(task -> {
+//                    TaskDTO taskDTO = new TaskDTO();
+//                    taskDTO.setId(task.getId());
+//                    taskDTO.setName(task.getName());
+//                    taskDTO.setArchived(true);
+//                    return taskDTO;
+//                })
+//                .toList();
     }
 
     @Override
-    public Task createTask(Long panelId, String name, String priority, Integer orderIndex) {
+    public TaskDTO createTask(Long panelId, String name, String priority, Integer orderIndex) {
         log.info("Creating task in panel ID: {}", panelId);
 
         // Найти панель по ID
@@ -147,12 +168,12 @@ public class TaskServiceImpl implements TaskService {
         task.setOrderIndex(orderIndex);
         task.setPanel(panel);
 
-        Task savedTask = taskRepository.save(task);
-        return savedTask;
+        taskRepository.save(task);
+        return buildTaskDto(task);
     }
 
     @Override
-    public Task assignUser(Long taskId, Long userId) {
+    public TaskDTO assignUser(Long taskId, Long userId) {
         log.info("Assigning user ID: {} to task ID: {}", userId, taskId);
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new IllegalArgumentException("Task not found"));
@@ -160,63 +181,32 @@ public class TaskServiceImpl implements TaskService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         task.getAssignees().add(user);
-        return taskRepository.save(task);
-    }
-
-    @Override
-    public void addSubTask(Long taskId, CreateSubTaskDTO subTaskDTO) {
-        log.info("Adding sub-task to task ID: {}", taskId);
-        Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new IllegalArgumentException("Task not found"));
-
-        Subtask subTask = new Subtask();
-        subTask.setName(subTaskDTO.getName());
-        subTask.setStatus(Status.NEW);
-        subTask.setTask(task);
-
-        task.getSubtasks().add(subTask);
         taskRepository.save(task);
+
+        return buildTaskDto(task);
     }
 
     @Override
-    public void updateSubTask(Long subTaskId, UpdateSubTaskDTO subTaskDTO) {
-        log.info("Updating sub-task ID: {}", subTaskId);
-        Subtask subTask = subTaskRepository.findById(subTaskId)
-                .orElseThrow(() -> new IllegalArgumentException("Sub-task not found"));
-
-        if (subTaskDTO.getName() != null) {
-            subTask.setName(subTaskDTO.getName());
-        }
-        if (subTaskDTO.getStatus() != null) {
-            subTask.setStatus(subTaskDTO.getStatus());
-        }
-        subTaskRepository.save(subTask);
-    }
-
-    @Override
-    public void deleteSubTask(Long subTaskId) {
-        log.info("Deleting sub-task ID: {}", subTaskId);
-        if (!subTaskRepository.existsById(subTaskId)) {
-            throw new IllegalArgumentException("Sub-task not found");
-        }
-        subTaskRepository.deleteById(subTaskId);
-    }
-
-    @Override
-    public void archiveTask(Long taskId) {
+    public TaskDTO archiveTask(Long taskId) {
         log.info("Archiving task ID: {}", taskId);
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new IllegalArgumentException("Task not found"));
         task.setArchived(true);
         taskRepository.save(task);
+
+        return buildTaskDto(task);
     }
 
-    public void unarchiveTask(Long taskId) {
+    @Override
+    public TaskDTO unArchiveTask(Long taskId) {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new EntityNotFoundException("Task not found"));
 
         task.setArchived(false);
-         taskRepository.save(task);
+        taskRepository.save(task);
+
+        return buildTaskDto(task);
+
     }
 
 }

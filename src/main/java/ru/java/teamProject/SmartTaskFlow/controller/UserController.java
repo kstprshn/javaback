@@ -4,12 +4,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.java.teamProject.SmartTaskFlow.dto.LoginDTO;
-import ru.java.teamProject.SmartTaskFlow.dto.RegisterUserDTO;
-import ru.java.teamProject.SmartTaskFlow.dto.UpdateProfileDTO;
+import ru.java.teamProject.SmartTaskFlow.dto.user.LoginDTO;
+import ru.java.teamProject.SmartTaskFlow.dto.user.RegisterUserDTO;
+import ru.java.teamProject.SmartTaskFlow.dto.user.UpdateProfileDTO;
 import ru.java.teamProject.SmartTaskFlow.service.UserServiceImpl;
 
 
@@ -19,7 +18,6 @@ import ru.java.teamProject.SmartTaskFlow.service.UserServiceImpl;
 public class UserController {
 
     private final UserServiceImpl userServiceImpl;
-    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterUserDTO registerDTO, BindingResult result) {

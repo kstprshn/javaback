@@ -3,9 +3,9 @@ package ru.java.teamProject.SmartTaskFlow.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.java.teamProject.SmartTaskFlow.dto.BoardDTO;
-import ru.java.teamProject.SmartTaskFlow.dto.CreateBoardDTO;
-import ru.java.teamProject.SmartTaskFlow.dto.UpdateBoardDTO;
+import ru.java.teamProject.SmartTaskFlow.dto.board.BoardDTO;
+import ru.java.teamProject.SmartTaskFlow.dto.board.CreateBoardDTO;
+import ru.java.teamProject.SmartTaskFlow.dto.board.UpdateBoardDTO;
 import ru.java.teamProject.SmartTaskFlow.entity.Board;
 import ru.java.teamProject.SmartTaskFlow.entity.User;
 import ru.java.teamProject.SmartTaskFlow.repository.BoardRepository;
@@ -13,6 +13,7 @@ import ru.java.teamProject.SmartTaskFlow.repository.UserRepository;
 import ru.java.teamProject.SmartTaskFlow.service.abstr.BoardService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -27,23 +28,35 @@ public class BoardServiceImpl implements BoardService {
         this.userRepository = userRepository;
     }
 
+    private BoardDTO buildDto(Board board){
+        return new BoardDTO()
+                .setId(board.getId())
+                .setName(board.getName())
+                .setArchived(board.getArchived())
+                .setMembers(board.getMembers().stream().map(User::getId).collect(Collectors.toList()));
+    }
+
+
     @Override
-    public void createBoard(String email, CreateBoardDTO boardDTO) {
+    public BoardDTO createBoard(String email, CreateBoardDTO boardDTO) {
         log.info("Creating board for user: {}", email);
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         Board board = new Board();
         board.setName(boardDTO.getName());
         boardRepository.save(board);
+
+        return buildDto(board);
     }
 
     @Override
-    public void updateBoardName(Long boardId, UpdateBoardDTO boardDTO) {
+    public BoardDTO updateBoardName(Long boardId, UpdateBoardDTO boardDTO) {
         log.info("Updating board name for board ID: {}", boardId);
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("Board not found"));
         board.setName(boardDTO.getName());
         boardRepository.save(board);
+        return buildDto(board);
     }
 
     @Override
@@ -53,14 +66,16 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Board addMember(Long boardId, Long userId) {
+    public BoardDTO addMember(Long boardId, Long userId) {
         log.info("Adding member to board ID: {}", boardId);
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("Board not found"));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         board.getMembers().add(user);
-        return boardRepository.save(board);
+        boardRepository.save(board);
+
+        return buildDto(board);
     }
 
     @Override
@@ -68,18 +83,10 @@ public class BoardServiceImpl implements BoardService {
         log.info("Fetching all boards for user: {}", email);
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
         return boardRepository.findByMembersContaining(user)
                 .stream()
-                .map(board -> {
-                    BoardDTO boardDTO = new BoardDTO();
-                    boardDTO.setId(board.getId());
-                    boardDTO.setName(board.getName());
-                    boardDTO.setMembers(board.getMembers().stream()
-                            .map(User::getEmail)
-                            .toList());
-                    return boardDTO;
-                })
-                .toList();
+                .map(this::buildDto).toList();
     }
 }
 

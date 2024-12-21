@@ -1,4 +1,4 @@
-package ru.java.teamProject.SmartTaskFlow.dto;
+package ru.java.teamProject.SmartTaskFlow.dto.comment;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

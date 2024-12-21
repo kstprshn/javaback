@@ -4,8 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import ru.java.teamProject.SmartTaskFlow.dto.CreatePanelDTO;
-import ru.java.teamProject.SmartTaskFlow.dto.PanelUpdateDTO;
+import ru.java.teamProject.SmartTaskFlow.dto.panel.CreatePanelDTO;
+import ru.java.teamProject.SmartTaskFlow.dto.panel.PanelUpdateDTO;
 import ru.java.teamProject.SmartTaskFlow.entity.Panel;
 import ru.java.teamProject.SmartTaskFlow.service.PanelServiceImpl;
 

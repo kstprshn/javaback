@@ -1,4 +1,4 @@
-package ru.java.teamProject.SmartTaskFlow.dto;
+package ru.java.teamProject.SmartTaskFlow.dto.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;

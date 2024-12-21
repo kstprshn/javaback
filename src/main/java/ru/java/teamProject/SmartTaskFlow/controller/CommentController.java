@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.java.teamProject.SmartTaskFlow.dto.AddCommentDTO;
+import ru.java.teamProject.SmartTaskFlow.dto.comment.AddCommentDTO;
 import ru.java.teamProject.SmartTaskFlow.entity.Comment;
 import ru.java.teamProject.SmartTaskFlow.service.CommentServiceImpl;
 
