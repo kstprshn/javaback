@@ -14,5 +14,8 @@ public class TaskDTO {
     private Integer orderIndex;
     private boolean archived;
 
+    private String startTime;
+    private String endTime;
+
     private Long panelId;
 }

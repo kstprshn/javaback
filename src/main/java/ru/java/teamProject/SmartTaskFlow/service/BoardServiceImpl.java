@@ -39,9 +39,6 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public BoardDTO createBoard(String email, CreateBoardDTO boardDTO) {
-        log.info("Creating board for user: {}", email);
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
         Board board = new Board();
         board.setName(boardDTO.getName());
         boardRepository.save(board);
@@ -72,8 +69,12 @@ public class BoardServiceImpl implements BoardService {
                 .orElseThrow(() -> new IllegalArgumentException("Board not found"));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
         board.getMembers().add(user);
+        user.getBoards().add(board);
+
         boardRepository.save(board);
+        userRepository.save(user);
 
         return buildDto(board);
     }

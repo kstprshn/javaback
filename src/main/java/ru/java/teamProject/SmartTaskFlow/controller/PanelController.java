@@ -7,35 +7,35 @@ import org.springframework.web.bind.annotation.*;
 import ru.java.teamProject.SmartTaskFlow.dto.panel.CreatePanelDTO;
 import ru.java.teamProject.SmartTaskFlow.dto.panel.PanelUpdateDTO;
 import ru.java.teamProject.SmartTaskFlow.entity.Panel;
-import ru.java.teamProject.SmartTaskFlow.service.PanelServiceImpl;
+import ru.java.teamProject.SmartTaskFlow.service.abstr.PanelService;
 
 
 @RestController
 @RequestMapping("/api/panels")
 public class PanelController {
 
-    private final PanelServiceImpl panelServiceImpl;
+    private final PanelService panelService;
 
-    public PanelController(PanelServiceImpl panelServiceImpl) {
-        this.panelServiceImpl = panelServiceImpl;
+    public PanelController(PanelService panelService) {
+        this.panelService = panelService;
     }
 
     @PostMapping
     public ResponseEntity<Panel> createPanel(@RequestBody CreatePanelDTO request) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(panelServiceImpl.createPanel(request.getBoardId(), request.getName(), request.getOrderIndex()));
+                .body(panelService.createPanel(request.getBoardId(), request.getName(), request.getOrderIndex()));
     }
 
     @PutMapping("/{panelId}")
     public ResponseEntity<Panel> updatePanel(@PathVariable Long panelId, @RequestBody PanelUpdateDTO request) {
         return ResponseEntity
-                .ok(panelServiceImpl.updatePanel(panelId, request.getName()));
+                .ok(panelService.updatePanel(panelId, request.getName()));
     }
 
     @DeleteMapping("/{panelId}")
     public ResponseEntity<Void> deletePanel(@PathVariable Long panelId) {
-        panelServiceImpl.deletePanel(panelId);
+        panelService.deletePanel(panelId);
         return ResponseEntity.noContent().build();
     }
 }

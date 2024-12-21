@@ -9,7 +9,6 @@ import ru.java.teamProject.SmartTaskFlow.entity.Comment;
 import ru.java.teamProject.SmartTaskFlow.service.CommentServiceImpl;
 
 @RestController
-@RequestMapping("/api/comments")
 public class CommentController {
 
     private final CommentServiceImpl commentServiceImpl;
@@ -19,11 +18,11 @@ public class CommentController {
         this.commentServiceImpl = commentServiceImpl;
     }
 
-    @PostMapping
-    public ResponseEntity<Comment> addComment(@RequestBody AddCommentDTO request) {
+    @PostMapping("/api/tasks/{taskId}/comments")
+    public ResponseEntity<Comment> addComment(@PathVariable Long taskId, @RequestBody AddCommentDTO request) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(commentServiceImpl.addComment(request.getTaskId(), request.getAuthorId(), request.getContent()));
+                .body(commentServiceImpl.addComment(taskId, request.getAuthorId(), request.getContent()));
     }
 
     @DeleteMapping("/{commentId}")

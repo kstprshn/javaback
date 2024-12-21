@@ -19,6 +19,7 @@ import ru.java.teamProject.SmartTaskFlow.service.abstr.TaskService;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -36,15 +37,9 @@ public class TaskServiceImpl implements TaskService {
                 .setName(task.getName())
                 .setPriority(task.getPriority())
                 .setArchived(task.isArchived())
+                .setStartTime(task.getStartDate().toString())
+                .setEndTime(task.getEndDate().toString())
                 .setPanelId(task.getPanel().getId());
-    }
-
-    private SubTaskDTO buildSubTaskDto(Subtask subtask) {
-        return new SubTaskDTO()
-                .setId(subtask.getId())
-                .setName(subtask.getName())
-                .setStatus(subtask.getStatus().name())
-                .setTaskId(subtask.getTask().getId());
     }
 
     public TaskServiceImpl(TaskRepository taskRepository, PanelRepository panelRepository, UserRepository userRepository) {
@@ -57,17 +52,8 @@ public class TaskServiceImpl implements TaskService {
     public List<TaskDTO> getTasksInColumn(Long columnId) {
         log.info("Fetching tasks for column ID: {}", columnId);
         return taskRepository.findByPanelId(columnId)
-                .stream()
-                .map(task -> {
-                    TaskDTO taskDTO = new TaskDTO();
-                    taskDTO.setId(task.getId());
-                    taskDTO.setName(task.getName());
-                    taskDTO.setPriority(task.getPriority());
-                    taskDTO.setOrderIndex(task.getOrderIndex());
-                    taskDTO.setArchived(task.isArchived());
-                    return taskDTO;
-                })
-                .toList();
+                .stream().map(this::buildTaskDto)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -116,7 +102,11 @@ public class TaskServiceImpl implements TaskService {
                 .orElseThrow(() -> new IllegalArgumentException("Task not found"));
         Panel targetColumn = panelRepository.findById(targetColumnId)
                 .orElseThrow(() -> new IllegalArgumentException("Target column not found"));
+
         task.setPanel(targetColumn);
+        targetColumn.getTasks().add(task);
+
+        panelRepository.save(targetColumn);
         taskRepository.save(task);
 
         return buildTaskDto(task);
