@@ -34,7 +34,6 @@ public class BoardServiceImpl implements BoardService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         Board board = new Board();
         board.setName(boardDTO.getName());
-        board.setCreator(user);
         boardRepository.save(board);
     }
 

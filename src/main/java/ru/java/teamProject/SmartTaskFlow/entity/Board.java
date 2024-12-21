@@ -25,11 +25,6 @@ public class Board {
 
     private Boolean isArchived = false;
 
-    @ManyToOne
-    @JoinColumn(name = "creator_id", nullable = false)
-    @JsonIgnore
-    private User creator;  ??
-
     @ManyToMany
     @JoinTable(
             name = "board_members",

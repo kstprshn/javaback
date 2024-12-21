@@ -1,7 +1,7 @@
 package ru.java.teamProject.SmartTaskFlow.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -15,10 +15,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/boards")
-@RequiredArgsConstructor
 public class BoardController {
 
     private final BoardServiceImpl boardService;
+
+    @Autowired
+    public BoardController(BoardServiceImpl boardService) {
+        this.boardService = boardService;
+    }
 
     @PostMapping
     public ResponseEntity<?> createBoard(Authentication authentication, @Valid @RequestBody CreateBoardDTO boardDTO) {
